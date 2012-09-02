@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Simple elnode pastebin</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" language="Javascript"></script>
+    <script type="text/javascript">
+var elnode_pastebin = (function () {
+    var self = {
+        get_paste_id: function () {
+            $.ajax('/new/', {
+                type: 'POST',
+                data:{
+                    author: $('#author').val(),
+                    lang: $('#lang').val(),
+                    expires : $('#expires').val(),
+                    text: $('#text').val()
+                },
+                dataType: 'text',
+                success: function (data, textStatus, jqXHR) {
+                    $('#pasteid').val(data);
+                    if ($('#paste').size() > 0) {
+                        $('#paste').attr('href', '/get/'+ $('#pasteid').val());
+                        $('#raw').attr('href', '/raw/'+ $('#pasteid').val());
+                        $('#paste').text('get paste ' + $('#pasteid').val());
+                        $('#raw').text('get raw paste ' + $('#pasteid').val());
+                    } else{
+                        $('#links').append('<ul><li><a id="paste" href="/get/'+ $('#pasteid').val() +'">get paste #'+ $('#pasteid').val() +'</a></li><li><a id="raw" href="/raw/'+ $('#pasteid').val() +'">get raw paste #'+ $('#pasteid').val() +'</a></li></ul>');
+                    }
+                }
+            });
+        }
+    };
+    return self;
+})();
+    </script>
+  </head>
+  <body>
+    <h1>New paste</h1>
+    <hr>
+    <div id="form">
+        <p>Author :<input type="text" id="author" name="author"></p>
+        <p>Syntax Highlighting:
+          <select id="lang" name="lang" size="1">
+            <option selected value="txt">none</option>
+            <option value="c">C</option>
+            <option value="cpp">C++</option>
+            <option value="java">Java</option>
+            <option value="xml">XML</option>
+            <option value="html">HTML</option>
+            <option value="js">Javascript</option>
+          </select>
+        </p>
+        <p>Paste Expiration:
+          <select id="expires" name="expires" size="1">
+            <option selected value="1800">30 minutes</option>
+            <option value="3600">1 hour</option>
+            <option value="7200">2 hour</option>
+            <option value="21600">6 hour</option>
+            <option value="86400">1 day</option>
+            <option value="259200">3 day</option>
+            <option value="604800">1 week</option>
+            <option value="1209600">2 week</option>
+            <option value="2419200">4 week</option>
+          </select>
+        </p>
+        <p>
+          <textarea id="text" name="text" cols="80" rows="30"></textarea>
+        </p>
+      <a href="#" onclick="elnode_pastebin.get_paste_id(); return false;">Submit</a>
+    </div>
+    <div id="links">
+      <hr>
+      <input id="pasteid" type="hidden">
+    </div>
+  </body>
+</html>
